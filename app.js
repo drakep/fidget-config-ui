@@ -210,6 +210,13 @@ $('btn-add-frame').addEventListener('click', () => {
         drawGrid();
     }
 });
+$('btn-dup-frame').addEventListener('click', () => {
+    if (frames.length < MAX_FRAMES) {
+        frames.push([...frames[curFrame]].map(c => c ? [...c] : null));
+        curFrame = frames.length - 1;
+        drawGrid();
+    }
+});
 $('btn-del-frame').addEventListener('click', () => {
     if (frames.length > 1) {
         frames.splice(curFrame, 1);

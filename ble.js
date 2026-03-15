@@ -97,7 +97,8 @@ class FidgetBLE {
         await this.chars.draw.writeValueWithoutResponse(new Uint8Array([1, frame]));
     }
     async drawSetConfig(frameCount, speed) {
-        await this.chars.draw.writeValueWithoutResponse(new Uint8Array([2, frameCount, speed]));
+        /* Use writeValue (with response) to guarantee delivery */
+        await this.chars.draw.writeValue(new Uint8Array([2, frameCount, speed]));
     }
 
     disconnect() {
