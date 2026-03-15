@@ -16,44 +16,80 @@
         </div>
 
         <div id="controls" class="disabled">
-            <div class="control-group">
-                <label>Brightness</label>
-                <input type="range" id="brightness" min="1" max="255" value="128">
-                <span id="brightness-val">128</span>
+            <!-- Tabs -->
+            <div id="tabs">
+                <button class="tab active" data-tab="config">Config</button>
+                <button class="tab" data-tab="draw">Draw</button>
             </div>
 
-            <div class="control-group">
-                <label>Speed</label>
-                <input type="range" id="speed" min="1" max="255" value="128">
-                <span id="speed-val">128</span>
-            </div>
-
-            <div class="control-group">
-                <label>Effect</label>
-                <select id="effect"></select>
-            </div>
-
-            <div class="control-group">
-                <label>Hue</label>
-                <input type="range" id="hue" min="0" max="1000" value="0">
-                <div id="hue-preview"></div>
-            </div>
-
-            <div class="control-group">
-                <label>Scroll Message</label>
-                <input type="text" id="scroll-msg" maxlength="63" placeholder="FIDGET OVERKILL">
-                <button id="btn-send-msg">Send</button>
-            </div>
-
-            <div id="live-status">
-                <h3>Live Status</h3>
-                <div id="status-fields">
-                    <span>Effect: <strong id="st-effect">--</strong></span>
-                    <span>Energy: <strong id="st-energy">--</strong>%</span>
-                    <span>Brightness: <strong id="st-bri">--</strong></span>
-                    <span>Speed: <strong id="st-spd">--</strong></span>
+            <!-- Config Tab -->
+            <div id="tab-config" class="tab-content active">
+                <div class="control-group">
+                    <label>Brightness</label>
+                    <input type="range" id="brightness" min="1" max="255" value="128">
+                    <span id="brightness-val">128</span>
                 </div>
-                <div id="energy-bar"><div id="energy-bar-fill"></div></div>
+                <div class="control-group">
+                    <label>Speed</label>
+                    <input type="range" id="speed" min="1" max="255" value="128">
+                    <span id="speed-val">128</span>
+                </div>
+                <div class="control-group">
+                    <label>Effect</label>
+                    <select id="effect"></select>
+                </div>
+                <div class="control-group">
+                    <label>Hue</label>
+                    <input type="range" id="hue" min="0" max="1000" value="0">
+                    <div id="hue-preview"></div>
+                </div>
+                <div class="control-group">
+                    <label>Scroll Message</label>
+                    <input type="text" id="scroll-msg" maxlength="63" placeholder="FIDGET OVERKILL">
+                    <button id="btn-send-msg">Send</button>
+                </div>
+                <div id="live-status">
+                    <h3>Live Status</h3>
+                    <div id="status-fields">
+                        <span>Effect: <strong id="st-effect">--</strong></span>
+                        <span>Energy: <strong id="st-energy">--</strong>%</span>
+                        <span>Brightness: <strong id="st-bri">--</strong></span>
+                        <span>Speed: <strong id="st-spd">--</strong></span>
+                    </div>
+                    <div id="energy-bar"><div id="energy-bar-fill"></div></div>
+                </div>
+            </div>
+
+            <!-- Draw Tab -->
+            <div id="tab-draw" class="tab-content">
+                <div class="control-group">
+                    <label>Color</label>
+                    <input type="color" id="draw-color" value="#ff0000">
+                    <button id="btn-eraser" class="small-btn">Eraser</button>
+                    <button id="btn-clear-frame" class="small-btn">Clear</button>
+                </div>
+                <div class="control-group">
+                    <label>Canvas (32x8) — click to paint, right-click to erase</label>
+                    <canvas id="draw-canvas" width="512" height="128"></canvas>
+                </div>
+                <div class="control-group">
+                    <label>Frame <span id="frame-label">1 / 1</span></label>
+                    <div class="frame-controls">
+                        <button id="btn-prev-frame" class="small-btn">&lt;</button>
+                        <button id="btn-next-frame" class="small-btn">&gt;</button>
+                        <button id="btn-add-frame" class="small-btn">+ Frame</button>
+                        <button id="btn-del-frame" class="small-btn">- Frame</button>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label>Animation Speed</label>
+                    <input type="range" id="draw-fps" min="1" max="30" value="4">
+                    <span id="draw-fps-val">4 fps</span>
+                </div>
+                <div class="control-group">
+                    <button id="btn-upload" class="action-btn">Upload to Device</button>
+                    <button id="btn-activate-draw" class="action-btn">Activate Draw Effect</button>
+                </div>
             </div>
         </div>
 

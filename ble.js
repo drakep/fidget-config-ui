@@ -5,6 +5,7 @@ const CHAR_EFFECT     = 'f1d6e7c0-0004-4f69-6467-65746f766572';
 const CHAR_HUE        = 'f1d6e7c0-0005-4f69-6467-65746f766572';
 const CHAR_SCROLL_MSG = 'f1d6e7c0-0006-4f69-6467-65746f766572';
 const CHAR_STATUS     = 'f1d6e7c0-0007-4f69-6467-65746f766572';
+const CHAR_DRAW       = 'f1d6e7c0-0008-4f69-6467-65746f766572';
 
 class FidgetBLE {
     constructor() {
@@ -38,8 +39,8 @@ class FidgetBLE {
         this.chars.hue        = await this.service.getCharacteristic(CHAR_HUE);
         this.chars.scrollMsg  = await this.service.getCharacteristic(CHAR_SCROLL_MSG);
         this.chars.status     = await this.service.getCharacteristic(CHAR_STATUS);
+        this.chars.draw       = await this.service.getCharacteristic(CHAR_DRAW);
 
-        // Subscribe to status notifications
         await this.chars.status.startNotifications();
         this.chars.status.addEventListener('characteristicvaluechanged', (ev) => {
             const dv = ev.target.value;
@@ -60,7 +61,6 @@ class FidgetBLE {
         const fx  = await this.chars.effect.readValue();
         const hue = await this.chars.hue.readValue();
         const msg = await this.chars.scrollMsg.readValue();
-
         const decoder = new TextDecoder();
         return {
             brightness: bri.getUint8(0),
@@ -72,37 +72,37 @@ class FidgetBLE {
     }
 
     async writeBrightness(val) {
-        const buf = new Uint8Array([val & 0xFF]);
-        await this.chars.brightness.writeValueWithoutResponse(buf);
+        await this.chars.brightness.writeValueWithoutResponse(new Uint8Array([val & 0xFF]));
     }
-
     async writeSpeed(val) {
-        const buf = new Uint8Array([val & 0xFF]);
-        await this.chars.speed.writeValueWithoutResponse(buf);
+        await this.chars.speed.writeValueWithoutResponse(new Uint8Array([val & 0xFF]));
     }
-
     async writeEffect(val) {
-        const buf = new Uint8Array([val & 0xFF]);
-        await this.chars.effect.writeValueWithoutResponse(buf);
+        await this.chars.effect.writeValueWithoutResponse(new Uint8Array([val & 0xFF]));
     }
-
     async writeHue(val) {
         const buf = new ArrayBuffer(4);
         new DataView(buf).setFloat32(0, val, true);
         await this.chars.hue.writeValueWithoutResponse(new Uint8Array(buf));
     }
-
     async writeScrollMsg(str) {
-        const buf = new TextEncoder().encode(str.substring(0, 63));
-        await this.chars.scrollMsg.writeValueWithoutResponse(buf);
+        await this.chars.scrollMsg.writeValueWithoutResponse(new TextEncoder().encode(str.substring(0, 63)));
+    }
+
+    /* Draw commands: [cmd, ...args] */
+    async drawSetPixel(frame, x, y, r, g, b) {
+        await this.chars.draw.writeValueWithoutResponse(new Uint8Array([0, frame, x, y, r, g, b]));
+    }
+    async drawClear(frame) {
+        await this.chars.draw.writeValueWithoutResponse(new Uint8Array([1, frame]));
+    }
+    async drawSetConfig(frameCount, speed) {
+        await this.chars.draw.writeValueWithoutResponse(new Uint8Array([2, frameCount, speed]));
     }
 
     disconnect() {
-        if (this.device && this.device.gatt.connected) {
-            this.device.gatt.disconnect();
-        }
+        if (this.device && this.device.gatt.connected) this.device.gatt.disconnect();
     }
-
     get connected() {
         return this.server && this.server.connected;
     }
