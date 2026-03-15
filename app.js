@@ -218,8 +218,40 @@ $('btn-del-frame').addEventListener('click', () => {
     }
 });
 
+/* Animation preview */
+let previewing = false;
+let previewTimer = null;
+
+function startPreview() {
+    if (frames.length < 2) return;
+    previewing = true;
+    $('btn-preview').textContent = 'Stop';
+    $('btn-preview').classList.add('active');
+    let fi = 0;
+    function tick() {
+        curFrame = fi;
+        drawGrid();
+        fi = (fi + 1) % frames.length;
+        const fps = parseInt($('draw-fps').value) || 4;
+        previewTimer = setTimeout(tick, 1000 / fps);
+    }
+    tick();
+}
+
+function stopPreview() {
+    previewing = false;
+    $('btn-preview').textContent = 'Preview';
+    $('btn-preview').classList.remove('active');
+    if (previewTimer) { clearTimeout(previewTimer); previewTimer = null; }
+}
+
+$('btn-preview').addEventListener('click', () => {
+    if (previewing) stopPreview(); else startPreview();
+});
+
 $('draw-fps').addEventListener('input', e => {
     $('draw-fps-val').textContent = e.target.value + ' fps';
+    if (previewing) { stopPreview(); startPreview(); }
 });
 
 $('btn-upload').addEventListener('click', async () => {
