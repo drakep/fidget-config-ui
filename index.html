@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fidget Overkill Config</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="app">
+        <h1>Fidget Overkill</h1>
+
+        <div id="status-bar">
+            <span id="ble-status">Disconnected</span>
+            <button id="btn-connect">Connect</button>
+        </div>
+
+        <div id="controls" class="disabled">
+            <div class="control-group">
+                <label>Brightness</label>
+                <input type="range" id="brightness" min="1" max="255" value="128">
+                <span id="brightness-val">128</span>
+            </div>
+
+            <div class="control-group">
+                <label>Speed</label>
+                <input type="range" id="speed" min="1" max="255" value="128">
+                <span id="speed-val">128</span>
+            </div>
+
+            <div class="control-group">
+                <label>Effect</label>
+                <select id="effect"></select>
+            </div>
+
+            <div class="control-group">
+                <label>Hue</label>
+                <input type="range" id="hue" min="0" max="1000" value="0">
+                <div id="hue-preview"></div>
+            </div>
+
+            <div class="control-group">
+                <label>Scroll Message</label>
+                <input type="text" id="scroll-msg" maxlength="63" placeholder="FIDGET OVERKILL">
+                <button id="btn-send-msg">Send</button>
+            </div>
+
+            <div id="live-status">
+                <h3>Live Status</h3>
+                <div id="status-fields">
+                    <span>Effect: <strong id="st-effect">--</strong></span>
+                    <span>Energy: <strong id="st-energy">--</strong>%</span>
+                    <span>Brightness: <strong id="st-bri">--</strong></span>
+                    <span>Speed: <strong id="st-spd">--</strong></span>
+                </div>
+                <div id="energy-bar"><div id="energy-bar-fill"></div></div>
+            </div>
+        </div>
+
+        <p class="browser-note">Requires Chrome/Edge/Opera (Web Bluetooth)</p>
+    </div>
+    <script src="ble.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
