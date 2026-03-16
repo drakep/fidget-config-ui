@@ -310,6 +310,56 @@ $('btn-activate-draw').addEventListener('click', async () => {
 
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
+/* ── Stats Tab ── */
+const BTN_NAMES = ['Thumb L', 'Org L1', 'Blk L', 'Org L2', 'Org R2', 'Blk R', 'Org R1', 'Thumb R'];
+const BTN_GPIOS = [0, 1, 2, 3, 9, 10, 20, 21];
+
+function formatUptime(secs) {
+    const h = Math.floor(secs / 3600);
+    const m = Math.floor((secs % 3600) / 60);
+    const s = secs % 60;
+    if (h > 0) return `${h}h ${m}m ${s}s`;
+    if (m > 0) return `${m}m ${s}s`;
+    return `${s}s`;
+}
+
+async function refreshStats() {
+    if (!ble.connected) return;
+    try {
+        const stats = await ble.readKeyStats();
+        $('stats-uptime').textContent = formatUptime(stats.uptime);
+
+        const tbody = $('stats-body');
+        tbody.innerHTML = '';
+        let total = 0;
+        stats.buttons.forEach((b, i) => {
+            total += b.count;
+            const tr = document.createElement('tr');
+            const interval = b.lastInterval > 0 ? `${b.lastInterval}ms` : '--';
+            tr.innerHTML = `<td>${BTN_NAMES[i]}</td><td>${BTN_GPIOS[i]}</td><td>${b.count}</td><td>${interval}</td>`;
+            tbody.appendChild(tr);
+        });
+        $('stats-total').textContent = total;
+    } catch (e) {
+        console.error('Stats read failed:', e);
+    }
+}
+
+$('btn-refresh-stats').addEventListener('click', refreshStats);
+
+// Auto-refresh stats when tab is active
+let statsInterval = null;
+document.querySelectorAll('.tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+        if (btn.dataset.tab === 'stats' && ble.connected) {
+            refreshStats();
+            statsInterval = setInterval(refreshStats, 2000);
+        } else {
+            if (statsInterval) { clearInterval(statsInterval); statsInterval = null; }
+        }
+    });
+});
+
 // Init
 setConnected(false);
 updateHuePreview();

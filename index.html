@@ -20,6 +20,7 @@
             <div id="tabs">
                 <button class="tab active" data-tab="config">Config</button>
                 <button class="tab" data-tab="draw">Draw</button>
+                <button class="tab" data-tab="stats">Stats</button>
             </div>
 
             <!-- Config Tab -->
@@ -91,6 +92,27 @@
                 <div class="control-group">
                     <button id="btn-upload" class="action-btn">Upload to Device</button>
                     <button id="btn-activate-draw" class="action-btn">Activate Draw Effect</button>
+                </div>
+            </div>
+        </div>
+
+            <!-- Stats Tab -->
+            <div id="tab-stats" class="tab-content">
+                <div class="control-group">
+                    <label>Uptime: <strong id="stats-uptime">--</strong></label>
+                    <button id="btn-refresh-stats" class="small-btn">Refresh</button>
+                </div>
+                <div class="control-group">
+                    <label>Button Press Stats</label>
+                    <table id="stats-table">
+                        <thead>
+                            <tr><th>Button</th><th>GPIO</th><th>Presses</th><th>Last Interval</th></tr>
+                        </thead>
+                        <tbody id="stats-body"></tbody>
+                        <tfoot>
+                            <tr><td colspan="2"><strong>Total</strong></td><td><strong id="stats-total">0</strong></td><td></td></tr>
+                        </tfoot>
+                    </table>
                 </div>
             </div>
         </div>

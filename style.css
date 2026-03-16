@@ -170,4 +170,24 @@ input[type="color"] {
 
 .frame-controls { display: flex; gap: 4px; flex-wrap: wrap; }
 
+/* Stats table */
+#stats-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85em;
+}
+#stats-table th, #stats-table td {
+    padding: 6px 8px;
+    text-align: left;
+    border-bottom: 1px solid #2a2a3e;
+}
+#stats-table th {
+    color: #888;
+    text-transform: uppercase;
+    font-size: 0.8em;
+    letter-spacing: 0.05em;
+}
+#stats-table td { color: #ccc; }
+#stats-table tfoot td { border-top: 2px solid #444; }
+
 .browser-note { text-align: center; font-size: 0.75em; color: #555; margin-top: 20px; }

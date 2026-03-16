@@ -6,6 +6,7 @@ const CHAR_HUE        = 'f1d6e7c0-0005-4f69-6467-65746f766572';
 const CHAR_SCROLL_MSG = 'f1d6e7c0-0006-4f69-6467-65746f766572';
 const CHAR_STATUS     = 'f1d6e7c0-0007-4f69-6467-65746f766572';
 const CHAR_DRAW       = 'f1d6e7c0-0008-4f69-6467-65746f766572';
+const CHAR_KEYS       = 'f1d6e7c0-0009-4f69-6467-65746f766572';
 
 class FidgetBLE {
     constructor() {
@@ -40,6 +41,7 @@ class FidgetBLE {
         this.chars.scrollMsg  = await this.service.getCharacteristic(CHAR_SCROLL_MSG);
         this.chars.status     = await this.service.getCharacteristic(CHAR_STATUS);
         this.chars.draw       = await this.service.getCharacteristic(CHAR_DRAW);
+        this.chars.keys       = await this.service.getCharacteristic(CHAR_KEYS);
 
         await this.chars.status.startNotifications();
         this.chars.status.addEventListener('characteristicvaluechanged', (ev) => {
@@ -99,6 +101,20 @@ class FidgetBLE {
     async drawSetConfig(frameCount, speed) {
         /* Use writeValue (with response) to guarantee delivery */
         await this.chars.draw.writeValue(new Uint8Array([2, frameCount, speed]));
+    }
+
+    async readKeyStats() {
+        const dv = await this.chars.keys.readValue();
+        const uptime = dv.getUint32(0, true);
+        const buttons = [];
+        for (let i = 0; i < 8; i++) {
+            const off = 4 + i * 6;
+            buttons.push({
+                count: dv.getUint32(off, true),
+                lastInterval: dv.getUint16(off + 4, true)
+            });
+        }
+        return { uptime, buttons };
     }
 
     disconnect() {
