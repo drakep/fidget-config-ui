@@ -272,6 +272,8 @@ $('btn-upload').addEventListener('click', async () => {
         await sleep(50);
 
         // Upload each frame pixel by pixel (only non-black pixels)
+        // Pace writes to avoid overwhelming BLE stack
+        let writeCount = 0;
         for (let fi = 0; fi < frames.length; fi++) {
             const f = frames[fi];
             for (let y = 0; y < ROWS; y++) {
@@ -279,9 +281,12 @@ $('btn-upload').addEventListener('click', async () => {
                     const c = f[y * COLS + x];
                     if (c) {
                         await ble.drawSetPixel(fi, x, y, c[0], c[1], c[2]);
+                        writeCount++;
+                        if (writeCount % 8 === 0) await sleep(20);
                     }
                 }
             }
+            btn.textContent = `Frame ${fi + 1}/${frames.length}...`;
         }
         // Set config
         const fps = parseInt($('draw-fps').value);
