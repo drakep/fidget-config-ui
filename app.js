@@ -47,6 +47,11 @@ $('btn-connect').addEventListener('click', async () => {
         $('hue').value = Math.round(v.hue * 1000);
         updateHuePreview();
         $('scroll-msg').value = v.scrollMsg;
+        /* Read HID keymap */
+        try {
+            const map = await ble.readKeymap();
+            setHidMapUI(map);
+        } catch (e2) { console.warn('Keymap read on connect failed:', e2); }
     } catch (e) {
         console.error(e);
         $('ble-status').textContent = 'Failed: ' + e.message;
@@ -357,8 +362,141 @@ document.querySelectorAll('.tab').forEach(btn => {
         } else {
             if (statsInterval) { clearInterval(statsInterval); statsInterval = null; }
         }
+        if (btn.dataset.tab === 'hid' && ble.connected) {
+            refreshHidMap();
+        }
     });
 });
+
+/* ── HID Tab ── */
+const HID_KEYS = [
+    { group: 'Disabled', keys: [{ name: '(None)', code: 0x00 }] },
+    { group: 'Letters', keys: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').map((c, i) => ({ name: c, code: 0x04 + i })) },
+    { group: 'Numbers', keys: [
+        { name: '1', code: 0x1E }, { name: '2', code: 0x1F }, { name: '3', code: 0x20 },
+        { name: '4', code: 0x21 }, { name: '5', code: 0x22 }, { name: '6', code: 0x23 },
+        { name: '7', code: 0x24 }, { name: '8', code: 0x25 }, { name: '9', code: 0x26 },
+        { name: '0', code: 0x27 },
+    ]},
+    { group: 'Arrows', keys: [
+        { name: 'Right', code: 0x4F }, { name: 'Left', code: 0x50 },
+        { name: 'Down', code: 0x51 }, { name: 'Up', code: 0x52 },
+    ]},
+    { group: 'Modifiers', keys: [
+        { name: 'Left Ctrl',  code: 0xE0 }, { name: 'Left Shift', code: 0xE1 },
+        { name: 'Left Alt',   code: 0xE2 }, { name: 'Left GUI',   code: 0xE3 },
+        { name: 'Right Ctrl', code: 0xE4 }, { name: 'Right Shift', code: 0xE5 },
+        { name: 'Right Alt',  code: 0xE6 }, { name: 'Right GUI',  code: 0xE7 },
+    ]},
+    { group: 'Special', keys: [
+        { name: 'Enter',     code: 0x28 }, { name: 'Escape',    code: 0x29 },
+        { name: 'Backspace', code: 0x2A }, { name: 'Tab',       code: 0x2B },
+        { name: 'Space',     code: 0x2C }, { name: 'Delete',    code: 0x4C },
+        { name: 'Home',      code: 0x4A }, { name: 'End',       code: 0x4D },
+        { name: 'Page Up',   code: 0x4B }, { name: 'Page Down', code: 0x4E },
+        { name: 'Caps Lock', code: 0x39 },
+    ]},
+    { group: 'F-Keys', keys: [
+        { name: 'F1',  code: 0x3A }, { name: 'F2',  code: 0x3B },
+        { name: 'F3',  code: 0x3C }, { name: 'F4',  code: 0x3D },
+        { name: 'F5',  code: 0x3E }, { name: 'F6',  code: 0x3F },
+        { name: 'F7',  code: 0x40 }, { name: 'F8',  code: 0x41 },
+        { name: 'F9',  code: 0x42 }, { name: 'F10', code: 0x43 },
+        { name: 'F11', code: 0x44 }, { name: 'F12', code: 0x45 },
+    ]},
+    { group: 'Media', keys: [
+        { name: 'Mute',        code: 0x7F }, { name: 'Volume Up',   code: 0x80 },
+        { name: 'Volume Down', code: 0x81 },
+    ]},
+    { group: 'Punctuation', keys: [
+        { name: '- _',   code: 0x2D }, { name: '= +',    code: 0x2E },
+        { name: '[ {',   code: 0x2F }, { name: '] }',    code: 0x30 },
+        { name: '\\ |',  code: 0x31 }, { name: '; :',    code: 0x33 },
+        { name: "' \"",  code: 0x34 }, { name: '` ~',    code: 0x35 },
+        { name: ', <',   code: 0x36 }, { name: '. >',    code: 0x37 },
+        { name: '/ ?',   code: 0x38 },
+    ]},
+];
+
+function buildHidTable() {
+    const tbody = $('hid-body');
+    tbody.innerHTML = '';
+    for (let i = 0; i < 8; i++) {
+        const tr = document.createElement('tr');
+
+        const tdName = document.createElement('td');
+        tdName.textContent = BTN_NAMES[i];
+        tr.appendChild(tdName);
+
+        const tdSel = document.createElement('td');
+        const sel = document.createElement('select');
+        sel.id = 'hid-btn-' + i;
+
+        for (const group of HID_KEYS) {
+            const optgroup = document.createElement('optgroup');
+            optgroup.label = group.group;
+            for (const key of group.keys) {
+                const opt = document.createElement('option');
+                opt.value = key.code;
+                opt.textContent = key.name;
+                optgroup.appendChild(opt);
+            }
+            sel.appendChild(optgroup);
+        }
+
+        tdSel.appendChild(sel);
+        tr.appendChild(tdSel);
+        tbody.appendChild(tr);
+    }
+}
+
+function setHidMapUI(map) {
+    for (let i = 0; i < 8; i++) {
+        const sel = $('hid-btn-' + i);
+        if (sel) sel.value = map[i];
+    }
+}
+
+function getHidMapUI() {
+    const map = new Uint8Array(8);
+    for (let i = 0; i < 8; i++) {
+        const sel = $('hid-btn-' + i);
+        map[i] = sel ? parseInt(sel.value) : 0;
+    }
+    return map;
+}
+
+async function refreshHidMap() {
+    if (!ble.connected) return;
+    try {
+        const map = await ble.readKeymap();
+        setHidMapUI(map);
+    } catch (e) {
+        console.error('Keymap read failed:', e);
+    }
+}
+
+$('btn-hid-save').addEventListener('click', async () => {
+    if (!ble.connected) return;
+    const btn = $('btn-hid-save');
+    const status = $('hid-save-status');
+    btn.disabled = true;
+    status.textContent = '';
+    try {
+        const map = getHidMapUI();
+        await ble.writeKeymap(map);
+        status.textContent = 'Saved!';
+        setTimeout(() => { status.textContent = ''; }, 2000);
+    } catch (e) {
+        console.error('Keymap write failed:', e);
+        status.textContent = 'Error: ' + e.message;
+        status.style.color = '#e94560';
+        setTimeout(() => { status.textContent = ''; status.style.color = '#4ecca3'; }, 3000);
+    }
+    btn.disabled = false;
+});
+
+buildHidTable();
 
 // Init
 setConnected(false);

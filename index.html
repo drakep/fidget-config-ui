@@ -20,6 +20,7 @@
             <div id="tabs">
                 <button class="tab active" data-tab="config">Config</button>
                 <button class="tab" data-tab="draw">Draw</button>
+                <button class="tab" data-tab="hid">HID</button>
                 <button class="tab" data-tab="stats">Stats</button>
             </div>
 
@@ -95,6 +96,24 @@
                 </div>
             </div>
         </div>
+
+            <!-- HID Tab -->
+            <div id="tab-hid" class="tab-content">
+                <div class="control-group">
+                    <label>HID Keyboard Mapping</label>
+                    <p class="hid-desc">Assign a USB HID keycode to each button. When pressed, the device sends the mapped key over BLE HID.</p>
+                    <table id="hid-table">
+                        <thead>
+                            <tr><th>Button</th><th>Key</th></tr>
+                        </thead>
+                        <tbody id="hid-body"></tbody>
+                    </table>
+                </div>
+                <div class="control-group">
+                    <button id="btn-hid-save" class="action-btn">Save to Device</button>
+                    <span id="hid-save-status"></span>
+                </div>
+            </div>
 
             <!-- Stats Tab -->
             <div id="tab-stats" class="tab-content">

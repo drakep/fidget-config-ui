@@ -7,6 +7,7 @@ const CHAR_SCROLL_MSG = 'f1d6e7c0-0006-4f69-6467-65746f766572';
 const CHAR_STATUS     = 'f1d6e7c0-0007-4f69-6467-65746f766572';
 const CHAR_DRAW       = 'f1d6e7c0-0008-4f69-6467-65746f766572';
 const CHAR_KEYS       = 'f1d6e7c0-0009-4f69-6467-65746f766572';
+const CHAR_KEYMAP     = 'f1d6e7c0-000a-4f69-6467-65746f766572';
 
 class FidgetBLE {
     constructor() {
@@ -42,6 +43,7 @@ class FidgetBLE {
         this.chars.status     = await this.service.getCharacteristic(CHAR_STATUS);
         this.chars.draw       = await this.service.getCharacteristic(CHAR_DRAW);
         this.chars.keys       = await this.service.getCharacteristic(CHAR_KEYS);
+        this.chars.keymap     = await this.service.getCharacteristic(CHAR_KEYMAP);
 
         await this.chars.status.startNotifications();
         this.chars.status.addEventListener('characteristicvaluechanged', (ev) => {
@@ -115,6 +117,17 @@ class FidgetBLE {
             });
         }
         return { uptime, buttons };
+    }
+
+    async readKeymap() {
+        const dv = await this.chars.keymap.readValue();
+        const map = new Uint8Array(8);
+        for (let i = 0; i < 8; i++) map[i] = dv.getUint8(i);
+        return map;
+    }
+
+    async writeKeymap(map) {
+        await this.chars.keymap.writeValue(new Uint8Array(map));
     }
 
     disconnect() {
