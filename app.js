@@ -3,7 +3,8 @@ const FX_NAMES = [
     'Rain', 'Fire', 'Spiral', 'Breathe', 'Glitch', 'Scroll',
     'Keys', 'Key Ripple', 'Key Rain', 'Draw',
     'Simon', 'Snake', 'Pong', 'Breakout', 'Tetris',
-    'Invaders', 'Flappy', 'Reaction', 'Life'
+    'Invaders', 'Flappy', 'Reaction', 'Life',
+    'Timer', 'Strobe', 'Paint'
 ];
 const FX_DRAW_ID = 14;
 
