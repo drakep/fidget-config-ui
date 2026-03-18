@@ -7,7 +7,9 @@ const FX_NAMES = [
     'Timer', 'Strobe', 'Paint',
     'Plasma', 'Matrix Rain', 'Waveform', 'Fireworks', 'Starfield',
     'Maze', 'Whack', 'Rhythm', 'Metronome',
-    'Dice', 'Stopwatch', 'Autocycle'
+    'Dice', 'Stopwatch', 'Autocycle',
+    'Pomodoro', 'Counter', 'Lava', 'Aurora', 'Equalizer',
+    'Lights Out', 'Tug War'
 ];
 const FX_DRAW_ID = 14;
 
