@@ -4,7 +4,10 @@ const FX_NAMES = [
     'Keys', 'Key Ripple', 'Key Rain', 'Draw',
     'Simon', 'Snake', 'Pong', 'Breakout', 'Tetris',
     'Invaders', 'Flappy', 'Reaction', 'Life',
-    'Timer', 'Strobe', 'Paint'
+    'Timer', 'Strobe', 'Paint',
+    'Plasma', 'Matrix Rain', 'Waveform', 'Fireworks', 'Starfield',
+    'Maze', 'Whack', 'Rhythm', 'Metronome',
+    'Dice', 'Stopwatch', 'Autocycle'
 ];
 const FX_DRAW_ID = 14;
 
