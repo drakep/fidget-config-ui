@@ -11,7 +11,8 @@ const FX_NAMES = [
     'Pomodoro', 'Counter', 'Lava', 'Aurora', 'Equalizer',
     'Lights Out', 'Tug War',
     '2P Pong', '2P Race', '2P Battle', '2P Shooter',
-    'RNG'
+    'RNG',
+    'Morse', 'Binary', 'Spectrum', 'Conway2', 'Clock'
 ];
 const FX_DRAW_ID = 14;
 
