@@ -10,7 +10,8 @@ const FX_NAMES = [
     'Dice', 'Stopwatch', 'Autocycle',
     'Pomodoro', 'Counter', 'Lava', 'Aurora', 'Equalizer',
     'Lights Out', 'Tug War',
-    '2P Pong', '2P Race', '2P Battle', '2P Shooter'
+    '2P Pong', '2P Race', '2P Battle', '2P Shooter',
+    'RNG'
 ];
 const FX_DRAW_ID = 14;
 
